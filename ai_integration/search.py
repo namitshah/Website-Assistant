@@ -1,7 +1,9 @@
 import json
 from openai import OpenAI
+import os
 
-client = OpenAI()
+#Read API key from environment variable 
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def load_system_prompt():
     with open("ai_integration/prompt.txt", "r", encoding="utf-8") as f:
@@ -50,4 +52,5 @@ def search(input_url: str, input_context: str, candidate_pages: list):
     data = json.loads(result_json)
 
     return data["output_url"], data["process_summary"], data["results_summary"]
+
 
