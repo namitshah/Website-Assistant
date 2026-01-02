@@ -3,13 +3,128 @@
  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" type="text/css" href="styles.css" />
+  <style>
+    html, body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    font-family: sans-serif;
+    vertical-align: baseline;
+    background: transparent;
+    }
+
+    .background {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    background-color: #c3dbf2;
+    position: relative;
+    }
+
+    .preview_section {
+    position: relative;
+    height: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+
+    .website_view {
+    width: 1000px;
+    height: 562px;
+    background-color: white;
+    margin: 5px;
+    border-radius: 0.5rem;
+    }
+
+    .submit {
+    width: 75px;
+    height: 1.5rem;
+    background-color: white;
+    margin: 5px;
+    border-radius: 0.5rem;
+    }
+
+    .url_input {
+    margin: 5px;
+    width: 500px;
+    height: 1.5rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    }
+
+    ::placeholder {
+    font-weight: bold;
+    opacity: 0.5;
+    color: grey;
+    }
+
+    .console_section {
+    display: flex;
+    margin: 0.5rem auto 0 auto;
+    width: 1000px;
+    height: 40%;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+    }
+
+    .input_section {
+    width: 80%;
+    display: flex;
+    margin: auto;
+    align-items: center;
+    flex-direction: column;
+    }
+
+    .prompt_textarea {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    }
+
+    .llm_section {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    }
+
+    .llm_process {
+    width: 100%;
+    height: 50%;
+    background-color: white;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin: auto;
+    }
+
+    .llm_answer {
+    width: 100%;
+    height: 50%;
+    background-color: white;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin: auto;
+    }
+    p {
+        margin: 2px;
+    }
+  </style>
  </head>
  <body>
   <div class="background">
    <div class="preview_section">
-    <div class="website_view"></div>
-    <input class="url_input" type="url" placeholder="https://..." />
+    <form id="inputs" action="." method="POST">
+        <input name="url" id="render" class="url_input" value="#@url@#" type="url" placeholder="https://..." />
+        <input name="prompt" id="prompt" type="hidden"/>
+        <button class="submit" type="button" onclick="changePreview();">Render</button>
+        <button class="submit" type="button" onclick="submitForm();">Search</button>
+    </form>
+    <iframe id="preview" class="website_view" src="#@url@#"></iframe>
    </div>
    <div class="console_section">
     <div class="input_section">
@@ -18,14 +133,43 @@
       rows="10"
       cols="55"
       class="prompt_textarea"
+      id="prompt-box"
       placeholder="I am looking for documents on ..."
-     ></textarea>
+     >#@prompt@#</textarea>
     </div>
     <div class="llm_section">
-     <div class="llm_process"><p>process of llm</p></div>
-     <div class="llm_answer"><p>generated answer</p></div>
+     <p>Process Summary:</p>
+     <textarea class="llm_process">#@process@#</textarea>
+     <p>Results Summary:</p>
+     <textarea class="llm_answer">#@results@#</textarea>
     </div>
    </div>
   </div>
+  <script>
+    function changePreview() {
+    // 1. Get the value from the input field
+    const input = document.getElementById('render').value;
+    const iframe = document.getElementById('preview');
+
+    if (input) {
+        // 2. Ensure the URL has a protocol (http/https)
+        let formattedUrl = input.startsWith('http') ? input : 'https://' + input;
+        
+        // 3. Update the iframe's src attribute
+        iframe.src = formattedUrl;
+    }
+    }
+    function submitForm() {
+      const prompt_text = document.getElementById('prompt-box').value;
+      const prompt_send = document.getElementById('prompt')
+      prompt_send.value = prompt_text;
+      FLAG = confirm('Search with GPT5-mini?');
+      if(FLAG)
+      {
+        const inputs = document.getElementById('inputs');
+        inputs.submit();
+      }
+    }
+  </script>
  </body>
 </html>

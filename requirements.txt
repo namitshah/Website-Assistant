@@ -1,0 +1,4 @@
+Django==5.2.8
+pip==25.2
+pip-chill==1.0.3
+setuptools==80.9.0
